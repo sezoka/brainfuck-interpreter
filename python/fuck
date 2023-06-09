@@ -1,0 +1,70 @@
+#!/bin/python
+import sys
+
+if len(sys.argv) != 2:
+    print("use fuck <source>")
+    exit(1)
+source_path = sys.argv[1]
+
+source = ""
+try:
+    with open(source_path) as fd:
+        source = fd.read()
+except:
+    print("cannot read file using path '" + source_path + "'")
+    exit(1)
+
+
+open_to_closing_table = {}
+closing_to_open_table = {}
+open_brace_ips = []
+
+commands = []
+
+for c in source:
+    if c in [">", "<", "+", "-", ".", ",", "[", "]"]:
+        commands.append(c)
+    if "[" == c:
+         open_brace_ips.append(len(commands)-1)
+    elif "]" == c:
+        open_ip = open_brace_ips.pop()
+        open_to_closing_table[open_ip] = len(commands) - 1
+        closing_to_open_table[len(commands) - 1] = open_ip
+
+dp = 0
+ip = 0
+data = [0]
+
+while ip != len(commands):
+    cmd = commands[ip]
+
+    if "<" == cmd:
+        if dp == 0:
+            print("underflow")
+            exit(0)
+        dp -= 1
+    elif ">" == cmd:
+        dp += 1
+        if dp == len(data):
+            data.append(0)
+    elif "+" == cmd:
+        data[dp] += 1
+        if 255 < data[dp]:
+            data[dp] = 0
+    elif "-" == cmd:
+        data[dp] -= 1
+        if data[dp] < 0:
+            data[dp] = 255
+    elif "." == cmd:
+        print(chr(data[dp]), end="")
+    elif "," == cmd:
+        input_str = input("enter char")
+        while input_str == "":
+            input_str = input("try again")
+        data[dp] = ord(input_str[-1])
+    elif "[" == cmd and data[dp] == 0:
+        ip = open_to_closing_table[ip]
+    elif "]" == cmd and data[dp] != 0:
+        ip = closing_to_open_table[ip]
+
+    ip += 1

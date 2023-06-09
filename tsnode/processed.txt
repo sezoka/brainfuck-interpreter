@@ -1,0 +1,72 @@
+Statistical profiling result from isolate-0x55f9fdfa61c0-167584-v8.log, (56950 ticks, 0 unaccounted, 0 excluded).
+
+ [Shared libraries]:
+   ticks  total  nonlib   name
+    155    0.3%          /usr/lib/libnode.so.111
+     15    0.0%          /usr/lib/libc.so.6
+
+ [JavaScript]:
+   ticks  total  nonlib   name
+  56541   99.3%   99.6%  JS: *run file:///home/blad/proj/brainfuck-interpreters/tsnode/build/main.js:101:13
+     13    0.0%    0.0%  JS: ^run file:///home/blad/proj/brainfuck-interpreters/tsnode/build/main.js:101:13
+      1    0.0%    0.0%  JS: ^getPackageScopeConfig node:internal/modules/esm/package_config:105:31
+      1    0.0%    0.0%  JS: ^get node:internal/bootstrap/node:365:8
+      1    0.0%    0.0%  JS: *insertUnchecked file:///home/blad/proj/tstd/build/std/array_list.js:69:44
+
+ [C++]:
+   ticks  total  nonlib   name
+    166    0.3%    0.3%  node::builtins::BuiltinLoader::CompileFunction(v8::FunctionCallbackInfo<v8::Value> const&)
+     18    0.0%    0.0%  __write@@GLIBC_2.2.5
+     10    0.0%    0.0%  void node::StreamBase::JSMethod<&node::StreamBase::Writev>(v8::FunctionCallbackInfo<v8::Value> const&)
+      8    0.0%    0.0%  node::binding::GetInternalBinding(v8::FunctionCallbackInfo<v8::Value> const&)
+      5    0.0%    0.0%  node::loader::ModuleWrap::New(v8::FunctionCallbackInfo<v8::Value> const&)
+      3    0.0%    0.0%  fputc@@GLIBC_2.2.5
+      2    0.0%    0.0%  fwrite@@GLIBC_2.2.5
+      1    0.0%    0.0%  std::ostreambuf_iterator<char, std::char_traits<char> > std::num_put<char, std::ostreambuf_iterator<char, std::char_traits<char> > >::_M_insert_int<long>(std::ostreambuf_iterator<char, std::char_traits<char> >, std::ios_base&, char, long) const
+      1    0.0%    0.0%  std::ostream::sentry::sentry(std::ostream&)
+      1    0.0%    0.0%  std::ostream::put(char)
+      1    0.0%    0.0%  std::ostream& std::ostream::_M_insert<long>(long)
+      1    0.0%    0.0%  std::basic_ostream<char, std::char_traits<char> >& std::__ostream_insert<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*, long)
+      1    0.0%    0.0%  std::_Hashtable<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::unique_ptr<v8::ScriptCompiler::CachedData, std::default_delete<v8::ScriptCompiler::CachedData> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::unique_ptr<v8::ScriptCompiler::CachedData, std::default_delete<v8::ScriptCompiler::CachedData> > > >, std::__detail::_Select1st, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true> >::_M_insert_unique_node(unsigned long, unsigned long, std::__detail::_Hash_node<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::unique_ptr<v8::ScriptCompiler::CachedData, std::default_delete<v8::ScriptCompiler::CachedData> > >, true>*, unsigned long)
+      1    0.0%    0.0%  node::options_parser::GetCLIOptions(v8::FunctionCallbackInfo<v8::Value> const&)
+      1    0.0%    0.0%  isprint@@GLIBC_2.2.5
+      1    0.0%    0.0%  fflush@@GLIBC_2.2.5
+      1    0.0%    0.0%  __munmap@@GLIBC_PRIVATE
+      1    0.0%    0.0%  __mprotect@@GLIBC_PRIVATE
+
+ [Summary]:
+   ticks  total  nonlib   name
+  56557   99.3%   99.6%  JavaScript
+    223    0.4%    0.4%  C++
+     10    0.0%    0.0%  GC
+    170    0.3%          Shared libraries
+
+ [C++ entry points]:
+   ticks    cpp   total   name
+    166   58.7%    0.3%  node::builtins::BuiltinLoader::CompileFunction(v8::FunctionCallbackInfo<v8::Value> const&)
+     67   23.7%    0.1%  node::loader::ModuleWrap::Evaluate(v8::FunctionCallbackInfo<v8::Value> const&)
+     11    3.9%    0.0%  node::loader::ModuleWrap::Link(v8::FunctionCallbackInfo<v8::Value> const&)
+     10    3.5%    0.0%  void node::StreamBase::JSMethod<&node::StreamBase::Writev>(v8::FunctionCallbackInfo<v8::Value> const&)
+     10    3.5%    0.0%  __write@@GLIBC_2.2.5
+      8    2.8%    0.0%  node::binding::GetInternalBinding(v8::FunctionCallbackInfo<v8::Value> const&)
+      5    1.8%    0.0%  node::loader::ModuleWrap::New(v8::FunctionCallbackInfo<v8::Value> const&)
+      1    0.4%    0.0%  std::ostreambuf_iterator<char, std::char_traits<char> > std::num_put<char, std::ostreambuf_iterator<char, std::char_traits<char> > >::_M_insert_int<long>(std::ostreambuf_iterator<char, std::char_traits<char> >, std::ios_base&, char, long) const
+      1    0.4%    0.0%  std::ostream::put(char)
+      1    0.4%    0.0%  std::ostream& std::ostream::_M_insert<long>(long)
+      1    0.4%    0.0%  node::options_parser::GetCLIOptions(v8::FunctionCallbackInfo<v8::Value> const&)
+      1    0.4%    0.0%  fwrite@@GLIBC_2.2.5
+      1    0.4%    0.0%  fputc@@GLIBC_2.2.5
+
+ [Bottom up (heavy) profile]:
+  Note: percentage shows a share of a particular caller in the total
+  amount of its parent calls.
+  Callers occupying less than 1.0% are not shown.
+
+   ticks parent  name
+  56541   99.3%  JS: *run file:///home/blad/proj/brainfuck-interpreters/tsnode/build/main.js:101:13
+  56541  100.0%    JS: ~runFile file:///home/blad/proj/brainfuck-interpreters/tsnode/build/main.js:175:23
+  56541  100.0%      JS: ~main file:///home/blad/proj/brainfuck-interpreters/tsnode/build/main.js:184:20
+  56541  100.0%        Script: ~<anonymous> file:///home/blad/proj/brainfuck-interpreters/tsnode/build/main.js:1:1
+  56541  100.0%          /usr/lib/libnode.so.111
+  56541  100.0%            node::loader::ModuleWrap::Evaluate(v8::FunctionCallbackInfo<v8::Value> const&)
+
