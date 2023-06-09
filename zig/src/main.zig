@@ -2,19 +2,19 @@ const std = @import("std");
 const HashMap = std.AutoHashMap;
 const ArrayList = std.ArrayList;
 
-const Command = union(enum) {
-    left: u8,
-    right: u8,
-    plus: u8,
-    minus: u8,
-    print,
-    input,
-    loop_start: u16,
-    loop_end: u16,
-    zero,
-};
+// const Command = union(enum) {
+//     left: u8,
+//     right: u8,
+//     plus: u8,
+//     minus: u8,
+//     print,
+//     input,
+//     loop_start: u16,
+//     loop_end: u16,
+//     zero,
+// };
 
-const CommandT = enum(u8) {
+const Cmd_Kind = enum(u4) {
     left,
     right,
     plus,
@@ -26,14 +26,19 @@ const CommandT = enum(u8) {
     zero,
 };
 
-fn parse_input(src: []const u8, alloc: std.mem.Allocator) !ArrayList(Command) {
-    var commands = ArrayList(Command).init(alloc);
+const Cmd = packed struct(u16) {
+    k: Cmd_Kind,
+    v: u12,
+};
+
+fn parse_input(src: []const u8, alloc: std.mem.Allocator) !ArrayList(Cmd) {
+    var commands = ArrayList(Cmd).init(alloc);
 
     var loop_start_ips = ArrayList(u16).init(alloc);
     var i: usize = 0;
     while (i < src.len) : (i += 1) {
         var c = src[i];
-        var cmd = @as(Command, switch (c) {
+        var cmd = @as(Cmd, switch (c) {
             '<', '>' => blk: {
                 var cnt: i32 = 0;
                 while (i < src.len and (src[i] == '<' or src[i] == '>')) : (i += 1) {
@@ -45,9 +50,9 @@ fn parse_input(src: []const u8, alloc: std.mem.Allocator) !ArrayList(Command) {
                 }
                 i -= 1;
                 if (cnt < 0) {
-                    break :blk Command{ .left = @intCast(u8, -cnt) };
+                    break :blk Cmd{ .k = .left, .v = @intCast(u12, -cnt) };
                 }
-                break :blk Command{ .right = @intCast(u8, cnt) };
+                break :blk Cmd{ .k = .right, .v = @intCast(u12, cnt) };
             },
             '+', '-' => blk: {
                 var cnt: i32 = 0;
@@ -60,14 +65,14 @@ fn parse_input(src: []const u8, alloc: std.mem.Allocator) !ArrayList(Command) {
                 }
                 i -= 1;
                 if (cnt < 0) {
-                    break :blk Command{ .minus = @intCast(u8, -cnt) };
+                    break :blk Cmd{ .k = .minus, .v = @intCast(u12, -cnt) };
                 }
-                break :blk Command{ .plus = @intCast(u8, cnt) };
+                break :blk Cmd{ .k = .plus, .v = @intCast(u12, cnt) };
             },
-            '.' => .print,
-            ',' => .input,
-            '[' => undefined,
-            ']' => undefined,
+            '.' => .{ .k = .print, .v = undefined },
+            ',' => .{ .k = .input, .v = undefined },
+            '[' => .{ .k = .loop_start, .v = undefined },
+            ']' => .{ .k = .loop_end, .v = undefined },
             else => continue,
         });
 
@@ -76,14 +81,14 @@ fn parse_input(src: []const u8, alloc: std.mem.Allocator) !ArrayList(Command) {
         if (c == '[') {
             if (src[i + 1] == '-' and src[i + 2] == ']') {
                 i += 2;
-                try commands.append(.zero);
+                try commands.append(.{ .k = .zero, .v = undefined });
                 continue;
             }
             try loop_start_ips.append(@intCast(u16, ip));
         } else if (c == ']') {
             const start_ip = loop_start_ips.pop();
-            commands.items[start_ip] = Command{ .loop_start = @intCast(u16, ip) };
-            cmd = Command{ .loop_end = @intCast(u16, start_ip) };
+            commands.items[start_ip] = Cmd{ .k = .loop_start, .v = @intCast(u12, ip) };
+            cmd = Cmd{ .k = .loop_end, .v = @intCast(u12, start_ip) };
         }
 
         try commands.append(cmd);
@@ -92,7 +97,7 @@ fn parse_input(src: []const u8, alloc: std.mem.Allocator) !ArrayList(Command) {
     return commands;
 }
 
-fn run(commands: ArrayList(Command)) !void {
+fn run(commands: ArrayList(Cmd)) !void {
     var ip: usize = 0;
     var dp: usize = 0;
     var data = [_]u8{0} ** 3000;
@@ -104,22 +109,22 @@ fn run(commands: ArrayList(Command)) !void {
 
     while (ip != commands.items.len) {
         const cmd = commands.items[ip];
-        switch (cmd) {
-            .left => |t| {
-                const times = @intCast(usize, t);
+        switch (cmd.k) {
+            .left => {
+                const times = @intCast(usize, cmd.v);
                 if (dp < times) {
                     return;
                 }
                 dp -= times;
             },
-            .right => |t| {
-                dp += @intCast(usize, t);
+            .right => {
+                dp += @intCast(usize, cmd.v);
             },
-            .plus => |rhs| {
-                data[dp] = @addWithOverflow(data[dp], rhs)[0];
+            .plus => {
+                data[dp] = @addWithOverflow(data[dp], @intCast(u8, cmd.v))[0];
             },
-            .minus => |rhs| {
-                data[dp] = @subWithOverflow(data[dp], rhs)[0];
+            .minus => {
+                data[dp] = @subWithOverflow(data[dp], @intCast(u8, cmd.v))[0];
             },
             .print => {
                 buf_writer_writer.writeByte(data[dp]) catch {};
@@ -128,14 +133,14 @@ fn run(commands: ArrayList(Command)) !void {
                 }
             },
             .input => {},
-            .loop_start => |end_ip| {
+            .loop_start => {
                 if (data[dp] == 0) {
-                    ip = end_ip;
+                    ip = cmd.v;
                 }
             },
-            .loop_end => |start_ip| {
+            .loop_end => {
                 if (data[dp] != 0) {
-                    ip = start_ip;
+                    ip = cmd.v;
                 }
             },
             .zero => {
